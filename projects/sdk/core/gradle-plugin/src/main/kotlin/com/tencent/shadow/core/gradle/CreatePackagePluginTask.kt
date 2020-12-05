@@ -27,6 +27,15 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 
+/**
+ * 创建的task的依赖关系（dependsOn）：
+ *
+ *           打包插件zip task
+ *                  \
+ *         生成config配置文件 task
+ *                   \
+ * 所有plugin和loader、runtime的assemble task
+ */
 internal fun createPackagePluginTask(project: Project, buildType: PluginBuildType): Task {
     return project.tasks.create("package${buildType.name.capitalize()}Plugin", Zip::class.java) {
         println("PackagePluginTask task run")

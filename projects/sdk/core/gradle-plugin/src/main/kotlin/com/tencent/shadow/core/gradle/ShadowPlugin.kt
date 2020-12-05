@@ -64,6 +64,7 @@ class ShadowPlugin : Plugin<Project> {
             val buildTypes = extension.buildTypes
 
             val tasks = mutableListOf<Task>()
+            //创建不同buildType的打包task，比如debug, release
             for (i in buildTypes) {
                 println("buildTypes = " + i.name)
                 val task = createPackagePluginTask(project, i)

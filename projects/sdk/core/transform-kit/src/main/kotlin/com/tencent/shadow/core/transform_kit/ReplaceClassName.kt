@@ -37,15 +37,20 @@ object ReplaceClassName {
     }
 
     fun replaceClassName(ctClass: CtClass, oldName: String, newName: String) {
+        //将Class文件中的出现的oldName类修改为newName类
         ctClass.replaceClassName(oldName, newName)
         mNewNames.add(newName)
     }
 
     fun checkAll(classPool: ClassPool, inputClassNames: List<String>): Map<String, Map<String, Set<String>>> {
+        //遍历插件apk中所有参与transform的类
         inputClassNames.forEach { inputClassName ->
             val inputClass = classPool[inputClassName]
+            //被遍历的类是否引用的其它被改名的类
             if (inputClass.refClasses.any { mNewNames.contains(it) }) {
+                //被引用的类只要有一个被改名了就遍历所有的被改名的类
                 mNewNames.forEach { newName ->
+                    //检查被引用的类的被调用的方法是否都存在
                     inputClass.checkMethodExist(classPool[newName])
                 }
             }

@@ -19,10 +19,12 @@
 package com.tencent.shadow.core.runtime;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.Fragment;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
@@ -67,9 +69,10 @@ public class ShadowInstrumentation extends Instrumentation {
         return (ShadowActivity) cl.loadClass(className).newInstance();
     }
 
-    public void callApplicationOnCreate(ShadowApplication app) {
-        app.onCreate();
+    public ShadowActivity newShadowActivity(Class<?> clazz, Context context, IBinder token, ShadowApplication application, Intent intent, ActivityInfo info, CharSequence title, ShadowActivity parent, String id, Object lastNonConfigurationInstance) throws IllegalAccessException, InstantiationException {
+        return (ShadowActivity) clazz.newInstance();
     }
+
 
     /**
      * shadow启动插件activity时并不是依靠Instrumentation来操作的,所以这边的execStartActivity并没有什么实在的意义
@@ -95,6 +98,10 @@ public class ShadowInstrumentation extends Instrumentation {
         return new ActivityResult(requestCode, intent);
     }
 
+    public void callApplicationOnCreate(ShadowApplication app) {
+        app.onCreate();
+    }
+
     /**
      * 同execStartActivity方法一样,其实插件中并不会调用到这里
      * 而且这个方法里面都大量的UnsupportedAppUsage方法调用,如果重写并不符合shadow零反射的原则
@@ -105,5 +112,6 @@ public class ShadowInstrumentation extends Instrumentation {
     public void callActivityOnCreate(ShadowActivity activity, Bundle icicle, PersistableBundle persistentState) {
     }
 
-
+    public void callActivityOnNewIntent(ShadowActivity activity, Intent intent) {
+    }
 }

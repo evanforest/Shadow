@@ -36,7 +36,7 @@ class InstrumentationTransform : SpecificTransform() {
 
         val newShadowApplicationMethods = shadowInstrumentation.getDeclaredMethods("newShadowApplication")
 
-        val newShadowActivityMethod = shadowInstrumentation.getDeclaredMethod("newShadowActivity")
+        val newShadowActivityMethods = shadowInstrumentation.getDeclaredMethods("newShadowActivity")
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) = allInputClass
@@ -57,7 +57,8 @@ class InstrumentationTransform : SpecificTransform() {
                 val codeConverter = CodeConverter()
                 newShadowApplicationMethods.forEach { codeConverter.redirectMethodCall("newApplication", it) }
 
-                codeConverter.redirectMethodCall("newActivity", newShadowActivityMethod)
+                newShadowActivityMethods.forEach {   codeConverter.redirectMethodCall("newActivity", it) }
+
                 try {
                     ctClass.instrument(codeConverter)
                 } catch (e: Exception) {
